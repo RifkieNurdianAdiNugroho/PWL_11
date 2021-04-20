@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ApiRequest;
 
-class LoginRequest extends ApiRequest
+class TodoRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +16,11 @@ class LoginRequest extends ApiRequest
      */
     public function authorize()
     {
-        return true;
+        if ($this->method() == Request::METHOD_POST) {
+            return true;
+            $todo = $this->route('todo');
+            return Auth::user()->id == $todo->user_id;
+        }
     }
 
     /**
@@ -25,8 +31,9 @@ class LoginRequest extends ApiRequest
     public function rules()
     {
         return [
-            'email' => 'required|string|email',
-            'password' => 'required|string|min:8',
+            'todo' => 'required|string|max:255',
+            'label' => 'nullable|string',
+            'done' => 'nullable',
         ];
     }
 }
